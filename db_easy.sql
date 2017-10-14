@@ -20,6 +20,9 @@ SET time_zone = "+00:00";
 -- Database: `db_easy`
 --
 
+CREATE DATABASE IF NOT EXISTS `db_easy`;
+USE `db_easy`;
+
 DELIMITER $$
 --
 -- Procedures
