@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 13-Out-2017 às 05:14
+-- Generation Time: 14-Out-2017 às 14:42
 -- Versão do servidor: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -19,6 +19,22 @@ SET time_zone = "+00:00";
 --
 -- Database: `db_easy`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `recupera_menor_preco` (IN `IDPRODUTO` INT)  BEGIN
+  
+  SELECT p.nome as produto_nome, sp.id as id_supermercado, sp.nome as supermercado_nome, pr.preco 
+  FROM precos pr 
+        INNER JOIN produtos p ON p.codigo = pr.id_produto
+        INNER JOIN supermercados sp ON sp.id = pr.id_supermercado
+  WHERE pr.id_produto = IDPRODUTO and pr.preco = (SELECT min(preco) FROM `precos` WHERE id_produto = IDPRODUTO) order by pr.preco;
+ 
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -43,7 +59,8 @@ INSERT INTO `cadastro` (`id`, `email`, `senha`, `nivel`) VALUES
 (4, 'rafael@email.com', 'c4ca4238a0b923820dcc509a6f75849b', 1),
 (5, 'usuario@email.com', 'c4ca4238a0b923820dcc509a6f75849b', 1),
 (6, 'rodrigo@cotemig.com.br', '81dc9bdb52d04dc20036dbd8313ed055', 1),
-(15, 'teste@email', 'c4ca4238a0b923820dcc509a6f75849b', 2);
+(15, 'teste@email', 'c4ca4238a0b923820dcc509a6f75849b', 2),
+(16, 'teste1@email', 'c4ca4238a0b923820dcc509a6f75849b', 1);
 
 -- --------------------------------------------------------
 
@@ -57,6 +74,45 @@ CREATE TABLE `lista` (
   `produtos_codigo` int(11) NOT NULL,
   `quantidade` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Extraindo dados da tabela `lista`
+--
+
+INSERT INTO `lista` (`id`, `id_usuario`, `produtos_codigo`, `quantidade`) VALUES
+(1, 7, 8, 2),
+(2, 7, 9, 2),
+(3, 10, 8, 2),
+(4, 10, 9, 1),
+(5, 10, 10, 22);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `precos`
+--
+
+CREATE TABLE `precos` (
+  `id` int(11) NOT NULL,
+  `id_produto` int(11) NOT NULL,
+  `id_supermercado` int(11) NOT NULL,
+  `preco` double NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Extraindo dados da tabela `precos`
+--
+
+INSERT INTO `precos` (`id`, `id_produto`, `id_supermercado`, `preco`) VALUES
+(1, 8, 1, 5),
+(2, 8, 2, 6),
+(3, 9, 2, 2),
+(4, 8, 4, 7),
+(5, 9, 1, 6),
+(6, 9, 4, 8),
+(10, 15, 1, 1),
+(11, 15, 2, 1),
+(12, 15, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -78,7 +134,10 @@ CREATE TABLE `produtos` (
 --
 
 INSERT INTO `produtos` (`codigo`, `nome`, `categoria`, `preco`, `datavalidade`, `foto`) VALUES
-(8, 'Coca cola', 'Bebida', 8, '2017-08-02', 'coca.jpg');
+(8, 'Coca cola', 'Bebida', 8, '2017-08-02', 'coca.jpg'),
+(9, 'Sprite', 'Bebidas', 9, '2018-12-13', 'default.jpg'),
+(10, 'produtodahora', 'oaoskdao', 12, '1999-12-23', 'default.jpg'),
+(15, 'bolo', 'bolo', 100, '2010-10-10', 'default.jpg');
 
 -- --------------------------------------------------------
 
@@ -135,9 +194,10 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`codigo`, `nome`, `cpf`, `datanascimento`, `telefone`, `cep`, `logradouro`, `bairro`, `numero`, `cidade`, `estado`, `id_cadastro`) VALUES
-(2, 'Rafael GuimarÃ£es', '14884656652', '1999-07-25', 2147483647, 30421270, 'Rua JoÃ£o Caetano', 'Nova SuÃ­ssa', 0, 'Belo Horizonte', 'MG', 4),
+(2, 'Rafael GuimarÃ£es', '14884656652', '2000-07-25', 2147483647, 30421270, 'Rua JoÃ£o Caetano', 'Nova SuÃ­ssa', 0, 'Belo Horizonte', 'MG', 4),
 (3, 'Rodrigo', '11111111', '1111-11-11', 0, 0, 'aa', 'aa', 0, 'aa', 'aa', 5),
-(7, 'Arthur', '3231231', '1996-12-24', 12323, 123123, 'casa', 'bairro', 11, 'cidade', 'MG', 15);
+(7, 'Arthur', '3231231', '1996-12-24', 12323, 123123, 'casa', 'bairro', 22, 'cidade', 'MG', 15),
+(10, 'eduardo', '232323', '2017-10-14', 232323, 232323, 'ookodka', 'okkodaosd', 2323, 'oskdasdk', 'gg', 16);
 
 --
 -- Indexes for dumped tables
@@ -156,6 +216,15 @@ ALTER TABLE `lista`
   ADD PRIMARY KEY (`id`),
   ADD KEY `produtos_codigo` (`produtos_codigo`),
   ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indexes for table `precos`
+--
+ALTER TABLE `precos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_produto` (`id_produto`),
+  ADD KEY `id_supermercado` (`id_supermercado`),
+  ADD KEY `id_supermercado_2` (`id_supermercado`);
 
 --
 -- Indexes for table `produtos`
@@ -185,27 +254,32 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `cadastro`
 --
 ALTER TABLE `cadastro`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `lista`
 --
 ALTER TABLE `lista`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT for table `precos`
+--
+ALTER TABLE `precos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT for table `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT for table `supermercados`
 --
 ALTER TABLE `supermercados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- Constraints for dumped tables
 --
@@ -216,6 +290,12 @@ ALTER TABLE `usuario`
 ALTER TABLE `lista`
   ADD CONSTRAINT `id_usuario_lista` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `lista_ibfk_1` FOREIGN KEY (`produtos_codigo`) REFERENCES `produtos` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Limitadores para a tabela `precos`
+--
+ALTER TABLE `precos`
+  ADD CONSTRAINT `produto_preco` FOREIGN KEY (`id_produto`) REFERENCES `produtos` (`codigo`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Limitadores para a tabela `usuario`
