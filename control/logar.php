@@ -23,20 +23,26 @@ else
 		$_SESSION['nivel'] = $row['nivel'];
 		$_SESSION['id'] = $row['id'];
 
-		$sql = "SELECT * FROM usuario WHERE id_cadastro = $row[id]";
-		$result = select($sql);
-
-		if($result->num_rows > 0)
+		if($row['nivel'] != 3)
 		{
-			$row = $result->fetch_assoc();
-			$_SESSION['id_usuario'] = $row['codigo'];
-			header('Location: ../principal.php');
+			$sql = "SELECT * FROM usuario WHERE id_cadastro = $row[id]";
+			$result = select($sql);
+
+			if($result->num_rows > 0)
+			{
+				$row = $result->fetch_assoc();
+				$_SESSION['id_usuario'] = $row['codigo'];
+				header('Location: ../principal.php');
+			}
+			else
+			{
+				header('Location: ../perfil/add.php');
+			}
 		}
 		else
 		{
-			header('Location: ../perfil/add.php');
+			header('Location: ../principal.php');
 		}
-		
 	}
 	else
 	{

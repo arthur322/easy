@@ -119,8 +119,14 @@ class Produto
             $this->preco=$_POST['produtos']['preco'];
             $this->datavalidade=$_POST['produtos']['datavalidade'];
 
+            foreach($_POST['supermercado'] as $supupdate){
+                $sql = $con->prepare("UPDATE precos SET preco=? WHERE id_supermercado=? AND id_produto=?");
+                $sql->execute(array($supupdate['preco'], $supupdate['id'], $this->codigo)) ;
+            }
+
             $sql = $con->prepare("UPDATE produtos SET nome=?, categoria=?, preco=?, datavalidade=? WHERE codigo=?");
             $sql->execute(array($this->nome, $this->categoria, $this->preco, $this->datavalidade,  $this->codigo)) ;
+
 
             header("Location: list.php");
 
@@ -141,12 +147,26 @@ class Produto
         echo "<tr><td>CODIGO</td><td><input type='text' name='produtos[codigo]' value='$this->codigo' disabled></td></tr>";
         echo "<tr><td>NOME</td><td><input type='text' name='produtos[nome]' value='$this->nome'></td></tr>";
         echo "<tr><td>CATEGORIA</td><td><input type='text' name='produtos[categoria]' value='$this->categoria'></td></tr>";
-        echo "<tr><td>PRECO</td><td><input type='text' name='produtos[preco]' value='$this->preco'></td></tr>";
-        echo "<tr><td>DATA VALIDADE</td><td><input type='text' name='produtos[datavalidade]' value='$this->datavalidade'></td></tr>";
+        echo "<tr><td>PRECO BASE</td><td><input type='text' name='produtos[preco]' value='$this->preco'></td></tr>";
+        echo "<tr><td>DATA VALIDADE</td><td><input type='data' name='produtos[datavalidade]' value='$this->datavalidade'></td></tr>";
         echo "<tr><td>FOTO</td><td>
         <input type='file' name='foto'>
         </td></tr>";
         echo "</table>";
+
+        $sql = $con->prepare("SELECT * FROM supermercados s LEFT JOIN precos p ON s.id = p.id_supermercado WHERE p.id_produto = ?");
+        $sql->execute(array($this->codigo));
+        if($supermercados=$sql->fetchAll(PDO::FETCH_CLASS))
+        {
+            echo "<table class='table table-bordered'>";
+            foreach($supermercados as $sup){
+                echo "<tr><td><img height='50px' src='../supermercados/images/".$sup->foto."'></td>";
+                echo "<td>".$sup->nome."<input type='hidden' name='supermercado[$sup->id_supermercado][id]' value='".$sup->id_supermercado."'></td>";
+                echo "<td>Preço <br><input type='number' name='supermercado[$sup->id_supermercado][preco]' value='".$sup->preco."'></td>";
+            }
+            echo "</table>";
+        }
+
         echo "<input class='btn btn-primary' type='submit' value='Salvar'>";
         echo " <a class='btn btn-default' href='list.php'>Cancelar</a>";
         echo "</form>";
@@ -172,8 +192,8 @@ class Produto
 
                 // alterando o campo no banco de dados
                 $sql = $con->prepare("UPDATE produtos SET foto=? WHERE codigo=?");
-                $sql->execute(array($this->foto,  $this->id)) ;
-
+                $sql->execute(array($this->foto,  $this->id));
+                
             }
 
             $this->nome=$_POST['produtos']['nome'];
@@ -182,7 +202,14 @@ class Produto
             $this->datavalidade=$_POST['produtos']['datavalidade'];
 
             $sql = $con->prepare("INSERT INTO produtos (nome, categoria, preco, datavalidade) VALUES (?,?,?,?)");
-            $sql->execute(array($this->nome, $this->categoria, $this->preco, $this->datavalidade)) ;
+            if($sql->execute(array($this->nome, $this->categoria, $this->preco, $this->datavalidade))){
+                $ultimoId = $con->lastInsertId();
+                foreach($_POST['supermercado'] as $supupdate){
+                    $sql = $con->prepare("INSERT INTO precos SET preco=?, id_supermercado=?, id_produto=?");
+                    $sql->execute(array($supupdate['preco'], $supupdate['id'], $ultimoId)) ;
+                }
+
+            }
 
             header("Location: list.php");
 
@@ -194,11 +221,27 @@ class Produto
         echo "<tr><td>NOME</td><td><input type='text' name='produtos[nome]' ></td></tr>";
         echo "<tr><td>CATEGORIA</td><td><input type='text' name='produtos[categoria]' ></td></tr>";
         echo "<tr><td>PRECO</td><td><input type='text' name='produtos[preco]' ></td></tr>";
-        echo "<tr><td>DATA VALIDADE</td><td><input type='text' name='produtos[datavalidade]' ></td></tr>";
+        echo "<tr><td>DATA VALIDADE</td><td><input type='date' name='produtos[datavalidade]' ></td></tr>";
         echo "<tr><td>FOTO</td><td>
         <input type='file' name='foto'>
         </td></tr>";
         echo "</table>";
+
+
+        $sql = $con->prepare("SELECT * FROM supermercados s");
+        $sql->execute(array($this->codigo));
+        if($supermercados=$sql->fetchAll(PDO::FETCH_CLASS))
+        {
+            echo "<table class='table table-bordered'>";
+            foreach($supermercados as $sup){
+                echo "<tr><td><img height='50px' src='../supermercados/images/".$sup->foto."'></td>";
+                echo "<td>".$sup->nome."<input type='hidden' name='supermercado[$sup->id][id]' value='".$sup->id."'></td>";
+                echo "<td>Preço <br><input type='number' name='supermercado[$sup->id][preco]' value='0'></td>";
+            }
+            echo "</table>";
+        }
+
+
         echo "<input class='btn btn-primary' type='submit' value='Enviar'>";
         echo "</form>";
 

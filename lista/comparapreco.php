@@ -10,7 +10,7 @@ if(!isset($_SESSION['id_usuario'])){
 
 require_once ("Lista.php");
 $lista = new Lista($_SESSION['id_usuario']);
-$lista->listar();
+$lista->comparaPreco();
 
 include "modal.php";
 

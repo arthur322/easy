@@ -1,6 +1,6 @@
 <?php
 include "../inc/header.php";
-session_start();
+
 require_once ("Produto.php");
-$produto = new Produto($_SESSION['id']);
+$produto = new Produto($_GET['codigo']);
 $produto->view();

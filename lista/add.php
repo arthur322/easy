@@ -2,5 +2,5 @@
 include "../inc/header.php";
 
 require_once ("Lista.php");
-$lista = new Lista();
+$lista = new Lista($_SESSION['id_usuario']);
 $lista->add();

@@ -79,13 +79,13 @@ switch($_SERVER['REQUEST_URI']){
     <div class="container-fluid">
         <ul class="nav navbar-nav">
             <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[1]; ?>"><a href="/easy/clientes/list.php">CLIENTES</a></li><?php } ?>
-            <li class="<?php echo $painel[2]; ?>"><a href="/easy/produtos/list.php">PRODUTOS</a></li>
-            <li class="<?php echo $painel[3]; ?>"><a href="/easy/supermercados/list.php">SUPERMERCADOS</a></li>
-            <li class="<?php echo $painel[4]; ?>"><a href="/easy/lista/list.php">LISTA</a></li>
-            <li class="<?php echo $painel[5]; ?>"><a href="/easy/relatorios/index.php">RELATÓRIOS</a></li>
+            <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[2]; ?>"><a href="/easy/produtos/list.php">PRODUTOS</a></li><?php } ?>
+            <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[3]; ?>"><a href="/easy/supermercados/list.php">SUPERMERCADOS</a></li><?php } ?>
+            <?php if($_SESSION['nivel'] != 3){ ?><li class="<?php echo $painel[4]; ?>"><a href="/easy/lista/list.php">LISTA</a></li><?php } ?>
+            <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[5]; ?>"><a href="/easy/relatorios/index.php">RELATÓRIOS</a></li><?php } ?>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="/easy/perfil/view.php"><span class="glyphicon glyphicon-user"></span> PERFIL</a></li>
+            <?php if($_SESSION['nivel'] != 3){ ?><li><a href="/easy/perfil/view.php"><span class="glyphicon glyphicon-user"></span> PERFIL</a></li><?php } ?>
             <li><a href="/easy/logout.php"><span class="glyphicon glyphicon-log-in"></span> SAIR</a></li>
         </ul>
     </div>
@@ -95,3 +95,12 @@ switch($_SERVER['REQUEST_URI']){
 </div>
 
 <div class="container">
+
+<?php
+
+if(isset($_SESSION['erro'])){
+    echo $_SESSION['erro'];
+    $_SESSION['erro'] = "";
+}
+
+?>

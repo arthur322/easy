@@ -120,10 +120,10 @@ class Perfil
         echo "<tr><td>BAIRRO</td><td><input type='text' name='usuario[bairro]' value='$this->bairro'></td></tr>";
         echo "<tr><td>NUMERO</td><td><input type='text' name='usuario[numero]' value='$this->numero'></td></tr>";
         echo "<tr><td>CIDADE</td><td><input type='text' name='usuario[cidade]' value='$this->cidade'></td></tr>";
-        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' value='$this->estado'></td></tr>";
+        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' value='$this->estado' maxlength='2'></td></tr>";
         echo "</table>";
         echo "<input class='btn btn-primary' type='submit' value='Salvar'>";
-        echo " <a class='btn btn-default' href='list.php'>Cancelar</a>";
+        echo " <a class='btn btn-default' href='view.php'>Cancelar</a>";
         echo "</form>";
 
     }
@@ -149,7 +149,13 @@ class Perfil
 
             $sql = $con->prepare("INSERT INTO usuario (nome, cpf, datanascimento, telefone, cep, logradouro, bairro, numero, cidade, estado, id_cadastro) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
             $sql->execute(array($this->nome, $this->cpf, $this->datanascimento, $this->telefone, $this->cep, $this->logradouro, $this->bairro, $this->numero, $this->cidade, $this->estado, $this->id_cadastro)) ;
-            $_SESSION['nivel'] = 2;
+            if($con->lastInsertId() != 0){
+                $_SESSION['id_usuario'] = $con->lastInsertId();
+                $_SESSION['nivel'] = 2;
+            }else{
+                $_SESSION['erro'] = "<script>alert('Erro ao inserir ou campos em branco!!');</script>";
+            }
+            
             header("Location: view.php");
 
         }
@@ -165,9 +171,9 @@ class Perfil
         echo "<tr><td>CEP</td><td><input type='text' name='usuario[cep]' ></td></tr>";
         echo "<tr><td>LOGRADOURO</td><td><input type='text' name='usuario[logradouro]' ></td></tr>";
         echo "<tr><td>BAIRRO</td><td><input type='text' name='usuario[bairro]' ></td></tr>";
-        echo "<tr><td>NUMERO</td><td><input type='text' name='usuario[numero]' ></td></tr>";
+        echo "<tr><td>NUMERO</td><td><input type='number' name='usuario[numero]' ></td></tr>";
         echo "<tr><td>CIDADE</td><td><input type='text' name='usuario[cidade]' ></td></tr>";
-        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' ></td></tr>";
+        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' maxlength='2'></td></tr>";
         echo "</table>";
         echo "<input class='btn btn-primary' type='submit' value='Enviar'>";
         echo "</form>";

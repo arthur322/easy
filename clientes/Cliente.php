@@ -140,9 +140,9 @@ class Cliente
             $this->cidade=$_POST['usuario']['cidade'];
             $this->estado=$_POST['usuario']['estado'];
 
-            $sql = $con->prepare("UPDATE usuario SET nome=?, cpf=?, datanascimento=?, telefone=?, cep=?, logradouro=?, bairro=?, numero=?, cidade=?, estado=?, WHERE codigo=?");
+            $sql = $con->prepare("UPDATE usuario SET nome=?, cpf=?, datanascimento=?, telefone=?, cep=?, logradouro=?, bairro=?, numero=?, cidade=?, estado=? WHERE codigo=?");
             $sql->execute(array($this->nome, $this->cpf, $this->datanascimento, $this->telefone, $this->cep, $this->logradouro, $this->bairro, $this->numero, $this->cidade, $this->estado, $this->codigo)) ;
-
+            
             header("Location: list.php");
 
         }
@@ -168,14 +168,14 @@ class Cliente
         echo "<tr><td>CODIGO</td><td><input type='text' name='usuario[codigo]' value='$this->codigo' disabled></td></tr>";
         echo "<tr><td>NOME</td><td><input type='text' name='usuario[nome]' value='$this->nome'></td></tr>";
         echo "<tr><td>CPF</td><td><input type='text' name='usuario[cpf]' value='$this->cpf'></td></tr>";
-        echo "<tr><td>DATA NASCIMENTO</td><td><input type='date' name='usuario[nome]' value='$this->datanascimento'></td></tr>";
+        echo "<tr><td>DATA NASCIMENTO</td><td><input type='date' name='usuario[datanascimento]' value='$this->datanascimento'></td></tr>";
         echo "<tr><td>TELEFONE</td><td><input type='text' name='usuario[telefone]' value='$this->telefone'></td></tr>";
         echo "<tr><td>CEP</td><td><input type='text' name='usuario[cep]' value='$this->cep'></td></tr>";
         echo "<tr><td>LOGRADOURO</td><td><input type='text' name='usuario[logradouro]' value='$this->logradouro'></td></tr>";
         echo "<tr><td>BAIRRO</td><td><input type='text' name='usuario[bairro]' value='$this->bairro'></td></tr>";
         echo "<tr><td>NUMERO</td><td><input type='text' name='usuario[numero]' value='$this->numero'></td></tr>";
         echo "<tr><td>CIDADE</td><td><input type='text' name='usuario[cidade]' value='$this->cidade'></td></tr>";
-        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' value='$this->estado'></td></tr>";
+        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' value='$this->estado' maxlength='2'></td></tr>";
         echo "</table>";
         echo "<input class='btn btn-primary' type='submit' value='Salvar'>";
         echo " <a class='btn btn-default' href='list.php'>Cancelar</a>";
@@ -219,9 +219,9 @@ class Cliente
         echo "<tr><td>CEP</td><td><input type='text' name='usuario[cep]' ></td></tr>";
         echo "<tr><td>LOGRADOURO</td><td><input type='text' name='usuario[logradouro]' ></td></tr>";
         echo "<tr><td>BAIRRO</td><td><input type='text' name='usuario[bairro]' ></td></tr>";
-        echo "<tr><td>NUMERO</td><td><input type='text' name='usuario[numero]' ></td></tr>";
+        echo "<tr><td>NUMERO</td><td><input type='number' name='usuario[numero]' ></td></tr>";
         echo "<tr><td>CIDADE</td><td><input type='text' name='usuario[cidade]' ></td></tr>";
-        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' ></td></tr>";
+        echo "<tr><td>ESTADO</td><td><input type='text' name='usuario[estado]' maxlength='2'></td></tr>";
         echo "</table>";
         echo "<input class='btn btn-primary' type='submit' value='Enviar'>";
         echo "</form>";
