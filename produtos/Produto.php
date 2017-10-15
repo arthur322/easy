@@ -49,12 +49,12 @@ class Produto
             echo "<tr><td>".$p->nome."</td>";
             echo "<td><img height='50px' src='images/".$p->foto."'></td>";
             echo "<td>".$p->categoria."</td>";
-            echo "<td>".$p->preco."</td>";
+            echo "<td>R$ ".$p->preco."</td>";
             echo "<td>".$p->datavalidade."</td>";
             echo "<td>
             <a class='btn btn-warning' href='view.php?codigo=$p->codigo'><i class='fa fa-search' aria-hidden='true'></i> Ver</a>
             <a class='btn btn-primary' href='update.php?codigo=$p->codigo'><i class='fa fa-pencil-square-o' aria-hidden='true'></i> Editar</a>
-            <button type='button' class='btn btn-danger btn-excluir' data-toggle='modal' data-target='#delete-modal' data-codigo='$p->codigo' data-nome='$p->categoria'><i class='fa fa-trash-o' aria-hidden='true'></i> Excluir</button>
+            <button type='button' class='btn btn-danger btn-excluir' data-toggle='modal' data-target='#delete-modal' data-codigo='$p->codigo' data-nome='$p->nome'><i class='fa fa-trash-o' aria-hidden='true'></i> Excluir</button>
             </td></tr>";
 
         }

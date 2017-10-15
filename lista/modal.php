@@ -18,7 +18,7 @@
 <script>
     $('#delete-modal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
-        var id = button.data('id');
+        var id = button.data('codigo');
         var nome = button.data('nome');
         var modal = $(this);
         modal.find('.modal-title').text('Excluir produto #' + id);

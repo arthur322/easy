@@ -45,6 +45,7 @@ class Lista
             echo "<td>
             <a class='btn btn-warning' href='view.php?id=$p->id'><i class='fa fa-search' aria-hidden='true'></i> Ver</a>
             <a class='btn btn-primary' href='update.php?id=$p->id'><i class='fa fa-pencil-square-o' aria-hidden='true'></i> Editar</a>
+            <button type='button' class='btn btn-danger btn-excluir' data-toggle='modal' data-target='#delete-modal' data-codigo='$p->id' data-nome='$p->nome'><i class='fa fa-trash-o' aria-hidden='true'></i> Excluir</button>
             </td></tr>";
 
         }
@@ -68,6 +69,14 @@ class Lista
 
         echo "<a class='btn btn-primary' href='list.php'>Voltar</a>";
 
+    }
+
+    public function delete(){
+
+        $con = new PDO(SERVIDOR, USUARIO, SENHA);
+
+        $sql = $con->prepare("DELETE FROM lista WHERE id=?");
+        $sql->execute(array($this->id)) ;
     }
 
     public function update(){
@@ -161,24 +170,23 @@ class Lista
 
         $con = new PDO(SERVIDOR, USUARIO, SENHA);
 
-        $sql = $con->prepare("select produtos_codigo, quantidade from lista where id_usuario = ?");
+        $sql = $con->prepare("SELECT 
+                                ps.nome as nome_produto, 
+                                sp.id as id_supermercado, 
+                                sp.nome as nome_supermercado, 
+                                p.preco, 
+                                l.quantidade FROM lista l 
+                                inner join precos p on l.produtos_codigo = p.id_produto
+                                left join produtos ps on ps.codigo = l.produtos_codigo
+                                left join supermercados sp on sp.id = p.id_supermercado
+                                WHERE l.id_usuario = ?  
+                                ORDER BY l.produtos_codigo, nome_supermercado");
         $sql->execute(array($this->id_usuario)) ;
         $produtos=$sql->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach($produtos as $pr){
-            $sql = $con->prepare("CALL recupera_menor_preco(?)");
-            $sql->execute(array($pr['produtos_codigo'])) ;
-            $result=$sql->fetch(PDO::FETCH_ASSOC);
-            $total[] = array('produto_nome' => $result['produto_nome'],
-                            'id_supermercado' => $result['id_supermercado'],
-                            'supermercado_nome' => $result['supermercado_nome'],
-                            'preco' => $result['preco'],
-                            'quantidade' => $pr['quantidade'], 
-                            'total' => ((int)$pr['quantidade'] * (int)$result['preco']));
-        }
-
+        echo "<div class='pull-right'> <a class='btn btn-success' href='list.php'>Voltar</a></div>";
         echo "<h2>Comparação</h2>";
-
+        
         echo "<table class='table table-bordered'>";
         echo "<tr><th>NOME DO PRODUTO</th>";
         echo "<th>SUPERMERCADO</th>";
@@ -186,13 +194,35 @@ class Lista
         echo "<th>QUANTIDADE</th>";
         echo "<th>TOTAL</th></tr>";
 
-        foreach($total AS $t){
-            echo "<tr><td>".$t['produto_nome']."</td>";
-            echo "<td><a href='../supermercados/view.php?id=".$t['id_supermercado']."'>".$t['supermercado_nome']."</a></td>";
-            echo "<td>".$t['preco']."</td>";
-            echo "<td>".$t['quantidade']."</td>";
-            echo "<td>".$t['total']."</td></tr>";
+        foreach($produtos AS $p){
+            echo "<tr><td>".$p['nome_produto']."</td>";
+            echo "<td><a href='../supermercados/view.php?id=".$p['id_supermercado']."'>".$p['nome_supermercado']."</a></td>";
+            echo "<td>R$ ".$p['preco']."</td>";
+            echo "<td>".$p['quantidade']."</td>";
+            echo "<td>".$p['quantidade'] * $p['preco']."</td></tr>";
 
+        }
+        echo "</table>";
+
+        $total = array();
+        foreach($produtos as $pr){
+            if(!isset($total[$pr['nome_supermercado']]))
+            {
+                $total[$pr['nome_supermercado']] = (float)$pr['quantidade'] * (float)$pr['preco'];
+            } 
+            else{
+                $total[$pr['nome_supermercado']] += (float)$pr['quantidade'] * (float)$pr['preco'];
+            } 
+        }
+
+        echo "<h2>Totais por Supermercado</h2>";
+        echo "<table class='table table-bordered'>";
+        echo "<tr><th>SUPERMERCADO</th>";
+        echo "<th>SOMATÓRIO</th>";
+
+        foreach($total AS $k=>$t){
+            echo "<tr><td>".$k."</td>";
+            echo "<td>R$ ".number_format((float)$t, 2, '.', '')."</td>";
         }
         echo "</table>";
 
