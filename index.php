@@ -1,5 +1,6 @@
 <?php
 session_start();
+header ("Content-Type: text/html; charset=utf8");
 if(isset($_SESSION['nivel']))
 {
 	header('Location: principal.php');

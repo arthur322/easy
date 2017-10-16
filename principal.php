@@ -1,4 +1,5 @@
 <?php
+header ("Content-Type: text/html; charset=utf8");
 session_start();
 if(!isset($_SESSION['id'])){
 	$_SESSION['erro'] = "<script>alert('Você precisa logar para acessar essa página!');</script>";

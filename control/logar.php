@@ -1,6 +1,7 @@
 <?php 
 include 'banco.php';
 session_start();
+header ("Content-Type: text/html; charset=utf8");
 
 if($_POST['email'] == "" || $_POST['senha'] == "")
 {

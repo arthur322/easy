@@ -1,6 +1,7 @@
 <?php 
 session_start();
 include 'banco.php';
+header ("Content-Type: text/html; charset=utf8");
 
 $email = $_POST['email'];
 $senha = md5($_POST['senha']);

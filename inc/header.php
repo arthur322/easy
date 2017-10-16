@@ -82,7 +82,7 @@ switch($_SERVER['REQUEST_URI']){
             <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[2]; ?>"><a href="/easy/produtos/list.php">PRODUTOS</a></li><?php } ?>
             <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[3]; ?>"><a href="/easy/supermercados/list.php">SUPERMERCADOS</a></li><?php } ?>
             <?php if($_SESSION['nivel'] != 3){ ?><li class="<?php echo $painel[4]; ?>"><a href="/easy/lista/list.php">LISTA</a></li><?php } ?>
-            <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[5]; ?>"><a href="/easy/relatorios/index.php">RELATÓRIOS</a></li><?php } ?>
+            <?php if($_SESSION['nivel'] == 3){ ?><li class="<?php echo $painel[5]; ?>"><a href="/easy/relatorios/relatorios.php">RELATÓRIOS</a></li><?php } ?>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <?php if($_SESSION['nivel'] != 3){ ?><li><a href="/easy/perfil/view.php"><span class="glyphicon glyphicon-user"></span> PERFIL</a></li><?php } ?>

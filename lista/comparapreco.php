@@ -1,5 +1,6 @@
 <?php
 include "../inc/header.php";
+header ("Content-Type: text/html; charset=utf8");
 
 if(!isset($_SESSION)) session_start();
 
